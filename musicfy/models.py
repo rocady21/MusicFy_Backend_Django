@@ -12,7 +12,7 @@ class User(models.Model):
     name = models.TextField(max_length=100)
     last_name = models.TextField(max_length=100)
     email = models.EmailField(max_length=254)
-    paswword = models.TextField(max_length=50)
+    password = models.TextField(max_length=50)
     is_active = models.BooleanField(default=False)
     create_user = models.DateTimeField(auto_now=True)
     id_rol = models.ForeignKey(Rol,on_delete=models.CASCADE)
