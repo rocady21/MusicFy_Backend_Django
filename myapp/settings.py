@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'myapp.wsgi.application'
 DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'music_fy',
+            'NAME': 'musicfy',
             'USER': 'Rodrigo',
             'PASSWORD': 'oliverman12',
             'HOST': 'localhost',
@@ -108,7 +108,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ]
+}
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -128,6 +133,8 @@ STATIC_URL = 'static/'
 
 CORS_ALLOWED_ORIGINS = [
 ]
+
+AUTH_USER_MODEL = 'musicfy.User'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
