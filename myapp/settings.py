@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "corsheaders",
-    "musicfy"
+    "musicfy",
+    "Messages",
+    "Playlist",
+    "Song"
 ]
 
 MIDDLEWARE = [
