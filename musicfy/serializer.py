@@ -8,7 +8,7 @@ from .models import Friends,Rol,Status,User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id","name" ,"last_name" ,"email" ,"password" ,"is_active" ,"create_user" ,"id_rol"]
+        fields = ["id","name" ,"last_name" ,"email" , "photo" ,"password" ,"is_active" ,"create_user" ,"id_rol"]
         
 class RolSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,5 +23,5 @@ class StatusSerializer(serializers.ModelSerializer):
 class FriendsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Friends
-        fields = ["id","id_from","id_to","id_status"]
+        fields = ["id","id_from","id_to"]
 

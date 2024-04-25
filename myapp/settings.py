@@ -135,7 +135,10 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000"
 ]
+
+USE_TZ = False
 
 AUTH_USER_MODEL = 'musicfy.User'
 

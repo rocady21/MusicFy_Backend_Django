@@ -10,12 +10,13 @@ class Rol(models.Model):
         return self.name
     
 class UserManager(BaseUserManager):
-    def create_user(self,name,last_name,email,password,is_active,creae_user,id_rol,usuario_administrador):
+    def create_user(self,name,last_name,email,password,is_active,creae_user,id_rol,photo,usuario_administrador):
         if not email and password:
             raise ValueError("El usuario debe de tener email y password")
         usuario = self.model(
             name = name,
             last_name = last_name,
+            photo = photo,
             email = self.normalize_email(email),
             is_active = is_active,
             creae_user = creae_user,
@@ -42,6 +43,7 @@ class User(AbstractBaseUser):
     name = models.TextField(max_length=100)
     last_name = models.TextField(max_length=100)
     email = models.EmailField(max_length=254, unique=True)
+    photo = models.TextField(max_length=500, null = True)
     password = models.TextField(max_length=1000, unique=True)
     is_active = models.BooleanField(default=True)
     create_user = models.DateTimeField(auto_now=True)
