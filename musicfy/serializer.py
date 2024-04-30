@@ -23,5 +23,5 @@ class StatusSerializer(serializers.ModelSerializer):
 class FriendsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Friends
-        fields = ["id","id_from","id_to"]
+        fields = ["id","id_from","id_to","id_status"]
 

@@ -9,8 +9,9 @@ from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework import status
 from .serializer import UserSerializer,FriendsSerializer
-from .models import User,Friends
+from .models import User,Friends,Status
 from datetime import timedelta,timezone,datetime
+from django.db.models import Q
 from django.contrib.auth.hashers import make_password,check_password
 # Create your views here.
 from rest_framework import viewsets
@@ -134,19 +135,184 @@ def filter_user_by_name(request,value):
             "msg":"no users by name"
         },status.HTTP_404_NOT_FOUND)
 
-@api_view(["GET"])
-def send_friend_request(request,value):
+
+# api for send friend_request to user
+@api_view(["POST"])
+def send_friend_request(request):
 
     data = request.data
 
-    new_friend_request = FriendsSerializer(request.data)
+    new_friend_request = FriendsSerializer(data=request.data)
+    if new_friend_request.is_valid() :
+        request_exist = Friends.objects.filter(id_from = new_friend_request.data["id_from"],id_to = new_friend_request.data["id_to"]).first()
+        if not request_exist:
+            # creo una nueva solicitud de amistad con id= 2
+            user_from = User.objects.filter(id=new_friend_request.data["id_from"]).first()
+            user_to = User.objects.filter(id=new_friend_request.data["id_to"]).first()
+            status_request = Status.objects.get(id=2)   
 
-    if new_friend_request.is_valid():
-        # creo una nueva solicitud de amistad con id= 2
-        new_f_r = Friends(id_from = data["id_from"],to =data["id_to"],id_status = 2)
-        new_f_r.save()
+            if user_from and user_to:
+                
+                new_friend = Friends(id_from = user_from, id_to = user_to,id_status = status_request)
+                new_friend.save()
 
-        return Response({
+                return Response({
+                    "ok":True,
+                    "msg":"Solicitud de amistad enviada"
+                },status.HTTP_200_OK)
+        else: 
+                return Response({
+                    "ok":True,
+                    "msg":"Ya existe una solicitud de amistad"
+                },status.HTTP_200_OK)
+        
+
+    return Response({
                 "ok":False,
-                "msg":"Solicitud creada correctamente"
+                "msg":"Error en la solicitud"
+            },status.HTTP_404_NOT_FOUND)
+    
+# api for send friend_request to user
+@api_view(["PUT"])
+def acept_friend_request(request):
+
+    new_friend_request = FriendsSerializer(data=request.data)
+    status_accpent = Status.objects.get(id=1)
+    if new_friend_request.is_valid():
+        # search request
+        friend = Friends.objects.filter(id_from = new_friend_request.data["id_from"],id_to = new_friend_request.data["id_to"]).first()
+
+        if friend: 
+            friend.id_status = status_accpent
+            friend.save()
+
+            return Response({
+                "ok":True,
+                "msg":"Solicitud aceptada correctamente"
             },status.HTTP_200_OK)
+        else : 
+            return Response({
+                "ok":False,
+                "msg":"No existe esa solicitud de amistad"
+            },status.HTTP_400_BAD_REQUEST)
+        
+
+@api_view(["DELETE"])
+def delete_friend_request(request):
+
+    new_friend_request = FriendsSerializer(data=request.data)
+    status_accpent = Status.objects.get(id=1)
+    if new_friend_request.is_valid():
+        # search request
+        friend = Friends.objects.filter(id_from = new_friend_request.data["id_from"],id_to = new_friend_request.data["id_to"]).first()
+
+        if friend: 
+            friend.id_status = status_accpent
+            friend.delete()
+
+            return Response({
+                "ok":True,
+                "msg":"Eliminada correctamente"
+            },status.HTTP_200_OK)
+        else : 
+            return Response({
+                "ok":False,
+                "msg":"No existe esa solicitud de amistad"
+            },status.HTTP_400_BAD_REQUEST)
+        
+@api_view(["GET"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def friend_requests_user(request):
+    
+    id_user = request.user.id
+    status_request = Status.objects.get(id=2)
+
+    print("status",status_request)
+
+    Friends_request_user = Friends.objects.filter(id_from = id_user , id_status = status_request).all()
+    
+
+    friend_requests_data = []
+    for friend_request in Friends_request_user:
+        s_data = FriendsSerializer(friend_request)
+        
+        data = s_data.data
+
+        friend_data = User.objects.filter(id=data["id_from"]).first()
+
+        if friend_data:
+            friend_serializer = UserSerializer(friend_data)
+            data_user = friend_serializer.data
+
+            data = {
+                "id":data_user["id"] ,
+                "name": data_user["name"],
+                "last_name": data_user["last_name"] ,
+                "photo": data_user["photo"],
+                "is_active": data_user["is_active"] ,
+                "id_rol": data_user["id_rol"]
+            }
+            friend_requests_data.append(data)
+
+    if len(friend_requests_data):
+        return Response({
+            "ok":False,
+            "msg":"hay solicitudes",
+            "data":friend_requests_data
+        },status.HTTP_200_OK)
+    else:
+        return Response({
+            "ok":False,
+            "msg":"No tienes solicitud de amistad"
+        },status.HTTP_400_BAD_REQUEST)
+    
+
+@api_view(["GET"])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def list_friends(request):
+    
+    id_user = request.user.id
+    status_request = Status.objects.get(id=1)
+
+    print("status",status_request)
+
+    friends_user = Friends.objects.filter(Q(id_from = id_user) | Q(id_to = id_user) , id_status = status_request).all()
+    
+    friend_requests_data = []
+    for friend_request in friends_user:
+        s_data = FriendsSerializer(friend_request)
+        
+        data = s_data.data
+
+        friend_data = User.objects.filter(id=data["id_from"]).first()
+
+        if friend_data:
+            friend_serializer = UserSerializer(friend_data)
+            data_user = friend_serializer.data
+
+            data = {
+                "id":data_user["id"] ,
+                "name": data_user["name"],
+                "last_name": data_user["last_name"] ,
+                "photo": data_user["photo"],
+                "is_active": data_user["is_active"] ,
+                "id_rol": data_user["id_rol"]
+            }
+            friend_requests_data.append(data)
+
+    if len(friend_requests_data):
+        return Response({
+            "ok":False,
+            "msg":"hay amigos",
+            "data":friend_requests_data
+        },status.HTTP_200_OK)
+    else:
+        return Response({
+            "ok":False,
+            "msg":"No hay amigos"
+        },status.HTTP_400_BAD_REQUEST)
+
+
+
