@@ -185,10 +185,14 @@ def acept_friend_request(request):
         if friend: 
             friend.id_status = status_accpent
             friend.save()
+            # return id_from 
+            user = User.objects.filter(id= new_friend_request.data["id_from"]).first()
+            user_data_serializer = UserSerializer(user)
 
             return Response({
                 "ok":True,
-                "msg":"Solicitud aceptada correctamente"
+                "msg":"Solicitud aceptada correctamente",
+                "new_friend":user_data_serializer.data
             },status.HTTP_200_OK)
         else : 
             return Response({
@@ -230,7 +234,7 @@ def friend_requests_user(request):
 
     print("status",status_request)
 
-    Friends_request_user = Friends.objects.filter(id_from = id_user , id_status = status_request).all()
+    Friends_request_user = Friends.objects.filter(id_to = id_user , id_status = status_request).all()
     
 
     friend_requests_data = []
@@ -257,7 +261,7 @@ def friend_requests_user(request):
 
     if len(friend_requests_data):
         return Response({
-            "ok":False,
+            "ok":True,
             "msg":"hay solicitudes",
             "data":friend_requests_data
         },status.HTTP_200_OK)
