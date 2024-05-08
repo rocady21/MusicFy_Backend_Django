@@ -1,0 +1,29 @@
+version: "3"
+services:
+  django:
+    restart: always
+    build: 
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    #environment:
+    #  - DJANGO_SETTINGS_MODULE=amsj.settings_base
+#    env_file:
+#        servicios.development.env
+    links:
+      - mysql_server
+    depends_on:
+      - mysql_server
+    volumes:
+      - .:/usr/src/app
+  
+  mysql_server:
+      image: mysql
+      environment:
+          - MYSQL_ROOT_PASSWORD=123456
+          - MYSQL_DATABASE=musicfy
+          - MYSQL_USER= Rodrigo
+          - MYSQL_PASSWORD= oliverman12
+      ports:
+        - 3306:3306

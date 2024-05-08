@@ -3,12 +3,6 @@ from django.contrib.auth.models import AbstractUser,AbstractBaseUser,BaseUserMan
 # Create your models here.
 
 
-class Rol(models.Model):
-    name = models.TextField(max_length=50)
-
-    def __str__(self):
-        return self.name
-    
 class UserManager(BaseUserManager):
     def create_user(self,name,last_name,email,password,is_active,creae_user,id_rol,photo,usuario_administrador):
         if not email and password:
@@ -39,12 +33,20 @@ class UserManager(BaseUserManager):
         usuario.save()
         return usuario
 
+
+class Rol(models.Model):
+    name = models.TextField(max_length=50)
+
+    def __str__(self):
+        return self.name
+    
+
 class User(AbstractBaseUser):
     name = models.TextField(max_length=100)
     last_name = models.TextField(max_length=100)
     email = models.EmailField(max_length=254, unique=True)
     photo = models.TextField(max_length=500, null = True)
-    password = models.TextField(max_length=1000, unique=True)
+    password = models.TextField(max_length=200)
     is_active = models.BooleanField(default=True)
     create_user = models.DateTimeField(auto_now=True)
     id_rol = models.ForeignKey(Rol, on_delete=models.CASCADE,related_name='users',null = True)
@@ -52,8 +54,6 @@ class User(AbstractBaseUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name', 'last_name', 'password']  # Campos requeridos aparte del email y la contraseña
-
-    objects = UserManager()
 
     def __str__(self):
         return f"{self.name} {self.last_name}"

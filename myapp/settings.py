@@ -85,12 +85,12 @@ DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
             'NAME': 'musicfy',
-            'USER': 'Rodrigo',
-            'PASSWORD': 'oliverman12',
-            'HOST': 'localhost',
+            'USER': 'root',
+            'PASSWORD': '123456',
+            'HOST': 'mysql_server',
             'PORT': '3306',
         }
-    }
+}
 
 
 # Password validation
@@ -110,6 +110,15 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -140,7 +149,7 @@ CORS_ALLOWED_ORIGINS = [
 
 USE_TZ = False
 
-AUTH_USER_MODEL = 'musicfy.User'
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
