@@ -144,12 +144,13 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000"
+    "http://localhost:3000", 
+    "http://localhost:3001"
 ]
 
 USE_TZ = False
 
-
+AUTH_USER_MODEL = 'musicfy.User'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

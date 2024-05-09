@@ -9,6 +9,20 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id","name" ,"last_name" ,"email" , "photo" ,"password" ,"is_active" ,"create_user" ,"id_rol"]
+
+def SerializerUserShow(data):
+
+   return {
+        "id": data["id"],
+        "name": data["name"],
+        "last_name": data["last_name"],
+        "email": data["email"],
+        "photo": data["photo"],
+        "is_active": data["is_active"],
+        "create_user": data["create_user"],
+        "id_rol": data["id_rol"]
+    }
+    
         
 class RolSerializer(serializers.ModelSerializer):
     class Meta:

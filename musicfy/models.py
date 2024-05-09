@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser,AbstractBaseUser,BaseUserMan
 
 
 class UserManager(BaseUserManager):
-    def create_user(self,name,last_name,email,password,is_active,creae_user,id_rol,photo,usuario_administrador):
+    def create_user(self,id,name,last_name,email,password,is_active,create_user,id_rol,photo,usuario_administrador):
         if not email and password:
             raise ValueError("El usuario debe de tener email y password")
         usuario = self.model(
@@ -13,20 +13,20 @@ class UserManager(BaseUserManager):
             photo = photo,
             email = self.normalize_email(email),
             is_active = is_active,
-            creae_user = creae_user,
+            create_user = create_user,
             id_rol = id_rol,
         )
 
         usuario.set_password(password)
         usuario.save()
         return usuario
-    def create_superuser(self,name,last_name,email,password,is_active,creae_user,id_rol,usuario_administrador):
+    def create_superuser(self,name,last_name,email,password,is_active,create_user,id_rol,usuario_administrador):
         usuario = self.create_user(
             name = name,
             last_name = last_name,
             email = email,
             is_active = is_active,
-            creae_user = creae_user,
+            create_user = create_user,
             id_rol = id_rol,
         )
         usuario.usuario_administrador = True
